@@ -1,6 +1,6 @@
 # urlmon
 
-** Work in progress.** Python script to monitor a webpage component for
+**Work in progress.** Python script to monitor a webpage component for
 changes.
 
 -   Free software: MIT
