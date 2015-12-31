@@ -23,7 +23,7 @@ test_requirements = [
 
 setup(
         name="urlmon",
-        version="0.1.0",
+        version="0.1.1",
         description="Python script to monitor a webpage for changes.",
         long_description=readme + "\n\n" + history,
         author="Nathan Henrie",
