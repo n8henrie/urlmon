@@ -5,6 +5,7 @@ Python script to monitor a webpage component for changes.
 """
 
 import sys
+import os
 import os.path
 import argparse
 import keyring
@@ -100,8 +101,12 @@ def main(arguments):
         domain = urlparse(url).netloc
         urlpath = urlparse(url).path
         url_dashes = re.sub(r'/', '-', urlpath)
+
+        cache = os.path.expanduser("~/.urlmon-cache")
+        if not os.path.isdir(cache):
+            os.mkdir(cache, mode=0o755)
         filename = domain + url_dashes + '.html'
-        filepath = os.path.join('cache', filename)
+        filepath = os.path.join(cache, filename)
 
         html = requests.get(url).text
 
@@ -118,9 +123,10 @@ def main(arguments):
                 logger.debug("Pushover notification sent")
 
         else:
+            logger.info("New url: {}".format(filename))
             with open(filepath, 'w') as w:
                 w.write(html)
-            logger.info("Wrote file to cache/: {}".format(filename))
+            logger.info("Wrote file to cache: {}".format(filename))
 
 
 def _cli():
