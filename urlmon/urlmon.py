@@ -28,14 +28,32 @@ logger = logging.getLogger(logger_name)
 
 
 class Pushover(object):
-    """Pushover client"""
+    """Pushover client
+
+    args
+    api_token -- pushover API token (https://pushover.net/apps)
+    user -- pushover user key (https://pushover.net/)
+    """
+
     def __init__(self, api_token, user):
         self.api_token = api_token
         self.user = user
 
+    def validate(self):
+        """Validate the user and token, returns the Requests response."""
+
+        validate_url = "https://api.pushover.net/1/users/validate.json"
+
+        payload = {
+            'token': self.api_token,
+            'user': self.user,
+        }
+
+        return requests.post(validate_url, data=payload)
+
     def push(self, message, device=None, title=None, url=None, url_title=None,
              priority=None, timestamp=None, sound=None):
-        """Pushes the notification.
+        """Pushes the notification, returns the Requests response.
 
         Arguments:
             message -- your message
@@ -72,7 +90,7 @@ class Pushover(object):
             'sound': sound
         }
 
-        return requests.post(api_url, params=payload).status_code
+        return requests.post(api_url, params=payload)
 
 
 def diff(first, second):
@@ -119,8 +137,9 @@ def main(arguments):
                 msg = "{} changed".format(url)
                 logger.info(msg)
                 logger.debug(diff(before, html))
-                pushover.push(msg)
-                logger.debug("Pushover notification sent")
+                response = pushover.push(msg)
+                logger.debug("Pushover notification sent: "
+                             "{}".format(response.status_code))
 
         else:
             logger.info("New url: {}".format(filename))
